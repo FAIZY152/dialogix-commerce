@@ -1,9 +1,17 @@
+import { useState } from "react";
 import { Sidebar } from "@/components/dashboard/Sidebar";
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, DollarSign, Zap, Star, Plus, TrendingUp } from "lucide-react";
+import { MessageSquare, DollarSign, Zap, Star, Plus, TrendingUp, Eye } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const Dashboard = () => {
+  const [chartPeriod, setChartPeriod] = useState<"7D" | "30D" | "90D">("7D");
+
   const stats = [
     {
       title: "Total Conversations",
@@ -39,6 +47,95 @@ const Dashboard = () => {
     },
   ];
 
+  const chartData = {
+    "7D": [
+      { date: "Mon", conversations: 142 },
+      { date: "Tue", conversations: 178 },
+      { date: "Wed", conversations: 156 },
+      { date: "Thu", conversations: 203 },
+      { date: "Fri", conversations: 189 },
+      { date: "Sat", conversations: 221 },
+      { date: "Sun", conversations: 198 },
+    ],
+    "30D": Array.from({ length: 30 }, (_, i) => ({
+      date: `Day ${i + 1}`,
+      conversations: Math.floor(Math.random() * 100) + 150,
+    })),
+    "90D": Array.from({ length: 90 }, (_, i) => ({
+      date: `Day ${i + 1}`,
+      conversations: Math.floor(Math.random() * 100) + 150,
+    })),
+  };
+
+  const recentConversations = [
+    {
+      id: 1,
+      customer: "Emma Wilson",
+      started: "5 min ago",
+      messages: 8,
+      status: "Active" as const,
+      outcome: "In Progress" as const,
+    },
+    {
+      id: 2,
+      customer: "Anonymous",
+      started: "12 min ago",
+      messages: 5,
+      status: "Resolved" as const,
+      outcome: "Sale" as const,
+    },
+    {
+      id: 3,
+      customer: "Michael Chen",
+      started: "1 hour ago",
+      messages: 12,
+      status: "Needs Attention" as const,
+      outcome: "In Progress" as const,
+    },
+    {
+      id: 4,
+      customer: "Sarah Johnson",
+      started: "2 hours ago",
+      messages: 6,
+      status: "Resolved" as const,
+      outcome: "No Sale" as const,
+    },
+    {
+      id: 5,
+      customer: "Anonymous",
+      started: "3 hours ago",
+      messages: 4,
+      status: "Resolved" as const,
+      outcome: "Sale" as const,
+    },
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Active":
+        return "bg-blue-500/10 text-blue-500 border-blue-500/20";
+      case "Resolved":
+        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+      case "Needs Attention":
+        return "bg-orange-500/10 text-orange-500 border-orange-500/20";
+      default:
+        return "";
+    }
+  };
+
+  const getOutcomeColor = (outcome: string) => {
+    switch (outcome) {
+      case "Sale":
+        return "bg-emerald-500/10 text-emerald-500 border-emerald-500/20";
+      case "No Sale":
+        return "bg-slate-500/10 text-slate-400 border-slate-500/20";
+      case "In Progress":
+        return "bg-purple-500/10 text-purple-400 border-purple-500/20";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="flex min-h-screen w-full">
       <Sidebar />
@@ -64,42 +161,132 @@ const Dashboard = () => {
             ))}
           </div>
 
-          {/* Recent Activity */}
-          <div className="grid lg:grid-cols-2 gap-6">
-            {/* Conversations Chart */}
-            <div className="glass-effect rounded-2xl p-6">
-              <div className="flex items-center justify-between mb-6">
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">Conversation Volume</h3>
-                  <p className="text-sm text-muted-foreground">Last 7 days</p>
-                </div>
-                <Button variant="ghost" size="sm">
-                  View All
-                </Button>
+          {/* Conversation Trends Chart */}
+          <div className="glass-effect rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Conversation Trends</h3>
+                <p className="text-sm text-muted-foreground">
+                  {chartPeriod === "7D" ? "Last 7 days" : chartPeriod === "30D" ? "Last 30 days" : "Last 90 days"}
+                </p>
               </div>
-              
-              {/* Simple Bar Chart Placeholder */}
-              <div className="space-y-4">
-                {[65, 85, 72, 90, 78, 95, 88].map((height, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <span className="text-sm text-muted-foreground w-8">
-                      {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"][i]}
-                    </span>
-                    <div className="flex-1 h-8 bg-muted rounded-lg overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-[hsl(258,90%,66%)] to-[hsl(213,94%,68%)] rounded-lg transition-all duration-500"
-                        style={{ width: `${height}%` }}
-                      />
-                    </div>
-                    <span className="text-sm font-medium w-12 text-right">
-                      {Math.round(height * 1.5)}
-                    </span>
-                  </div>
+              <div className="flex gap-2">
+                {(["7D", "30D", "90D"] as const).map((period) => (
+                  <Button
+                    key={period}
+                    variant={chartPeriod === period ? "default" : "ghost"}
+                    size="sm"
+                    onClick={() => setChartPeriod(period)}
+                  >
+                    {period}
+                  </Button>
                 ))}
               </div>
             </div>
 
-            {/* Top Products */}
+            <ChartContainer
+              config={{
+                conversations: {
+                  label: "Conversations",
+                  color: "hsl(258, 90%, 66%)",
+                },
+              }}
+              className="h-[300px] w-full"
+            >
+              <AreaChart data={chartData[chartPeriod]}>
+                <defs>
+                  <linearGradient id="colorConversations" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(258, 90%, 66%)" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="hsl(258, 90%, 66%)" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                <XAxis
+                  dataKey="date"
+                  tickLine={false}
+                  axisLine={false}
+                  tickMargin={8}
+                  tickFormatter={(value) => (chartPeriod === "7D" ? value : value)}
+                />
+                <ChartTooltip content={<ChartTooltipContent />} />
+                <Area
+                  type="monotone"
+                  dataKey="conversations"
+                  stroke="hsl(258, 90%, 66%)"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorConversations)"
+                />
+              </AreaChart>
+            </ChartContainer>
+          </div>
+
+          {/* Recent Conversations Table */}
+          <div className="glass-effect rounded-2xl p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h3 className="text-lg font-semibold mb-1">Recent Conversations</h3>
+                <p className="text-sm text-muted-foreground">Latest customer interactions</p>
+              </div>
+              <Button variant="ghost" size="sm">
+                View All
+              </Button>
+            </div>
+
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Started</TableHead>
+                  <TableHead>Messages</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Outcome</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {recentConversations.map((conv, index) => (
+                  <TableRow key={conv.id} className={index % 2 === 1 ? "bg-muted/20" : ""}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-8 w-8">
+                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                            {conv.customer === "Anonymous" ? "?" : conv.customer.charAt(0)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span className="font-medium">{conv.customer}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">{conv.started}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="font-mono">
+                        {conv.messages}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={getStatusColor(conv.status)}>
+                        {conv.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={getOutcomeColor(conv.outcome)}>
+                        {conv.outcome}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button variant="ghost" size="sm">
+                        <Eye className="w-4 h-4 mr-1" />
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+
+          {/* Top Products */}
+          <div className="grid lg:grid-cols-2 gap-6">
             <div className="glass-effect rounded-2xl p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>

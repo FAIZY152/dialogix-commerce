@@ -10,6 +10,7 @@ import ConnectStore from "./pages/onboarding/ConnectStore";
 import Importing from "./pages/onboarding/Importing";
 import Customize from "./pages/onboarding/Customize";
 import Dashboard from "./pages/Dashboard";
+import Conversations from "./pages/dashboard/Conversations";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/onboarding/importing" element={<Importing />} />
           <Route path="/onboarding/customize" element={<Customize />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/conversations" element={<Conversations />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
