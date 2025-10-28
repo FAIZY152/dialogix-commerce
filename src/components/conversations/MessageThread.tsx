@@ -82,7 +82,7 @@ export const MessageThread = ({ conversationId }: MessageThreadProps) => {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-6 space-y-6 animate-fade-in">
         {messages.map((message) => (
           <div
             key={message.id}

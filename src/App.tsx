@@ -11,6 +11,7 @@ import Importing from "./pages/onboarding/Importing";
 import Customize from "./pages/onboarding/Customize";
 import Dashboard from "./pages/Dashboard";
 import Conversations from "./pages/dashboard/Conversations";
+import Analytics from "./pages/dashboard/Analytics";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
           <Route path="/onboarding/customize" element={<Customize />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/dashboard/conversations" element={<Conversations />} />
+          <Route path="/dashboard/analytics" element={<Analytics />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
