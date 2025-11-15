@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Conversations from "./pages/dashboard/Conversations";
 import Analytics from "./pages/dashboard/Analytics";
 import NotFound from "./pages/NotFound";
-// tenstack Query
+// add writing-interface-for-recommendation
 const queryClient = new QueryClient();
 
 const App = () => (
