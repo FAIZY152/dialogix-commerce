@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Conversations from "./pages/dashboard/Conversations";
 import Analytics from "./pages/dashboard/Analytics";
 import NotFound from "./pages/NotFound";
-// integrate sendgrid for mail
+// integrate aws ses
 const queryClient = new QueryClient();
 
 const App = () => (
