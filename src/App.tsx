@@ -13,7 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Conversations from "./pages/dashboard/Conversations";
 import Analytics from "./pages/dashboard/Analytics";
 import NotFound from "./pages/NotFound";
-// integrate aws ses
+// integrate s3 for uploading documents
 const queryClient = new QueryClient();
 
 const App = () => (
