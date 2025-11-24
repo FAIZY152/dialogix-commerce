@@ -11,7 +11,7 @@ import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const Dashboard = () => {
   const [chartPeriod, setChartPeriod] = useState<"7D" | "30D" | "90D">("7D");
-// integrate rabitmq for email sending
+// integrate amazon sns for messages
   const stats = [
     {
       title: "Total Conversations",
